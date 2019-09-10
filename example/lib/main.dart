@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
-import 'package:flutter_vlc_player_example/screen2.dart';
+import 'package:flutter_vlc_player/cplayer.dart';
 
 void main() => runApp(MyApp());
 
@@ -17,6 +17,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   VlcPlayer videoView;
   VlcPlayerController _videoViewController;
   VlcPlayerController _videoViewController2;
+  String url = "rtsp://admin:admin@192.168.100.181:554/mode=real&idc=1&ids=1";
 
   @override
   void initState() {
@@ -68,7 +69,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         appBar: new AppBar(
           title: const Text('Plugin example app'),
            actions: <Widget>[
-             GoTo()
+             GoTo(url)
            ],
         ),
         floatingActionButton: FloatingActionButton(
@@ -79,7 +80,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           children: <Widget>[
             VlcPlayer(
               aspectRatio: 16 / 9,
-              url: "rtsp://admin:admin@192.168.100.168:554/mode=real&idc=1&ids=1",
+              url: url,
               controller: _videoViewController,
               placeholder: Container(
                 height: 250.0,
@@ -89,7 +90,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 ),
               ),
             ),
-            SizedBox(height: 10,),
+            SizedBox(height: 20,),
             Container(
               child: Row(
                 children: <Widget>[
@@ -109,44 +110,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                     child: Text("DISPOSE"),
                     onPressed: () {
                       _videoViewController.dispose();
-                    },
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 20,),
-            VlcPlayer(
-              aspectRatio: 16 / 9,
-              url: "rtsp://admin:admin@192.168.100.168:554/mode=real&idc=1&ids=1",
-              controller: _videoViewController2,
-              placeholder: Container(
-                height: 250.0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[CircularProgressIndicator()],
-                ),
-              ),
-            ),
-            SizedBox(height: 10,),
-            Container(
-              child: Row(
-                children: <Widget>[
-                  FlatButton(
-                    child: Text("PLAY"),
-                    onPressed: () {
-                      _videoViewController2.play();
-                    },
-                  ),
-                  FlatButton(
-                    child: Text("STOP"),
-                    onPressed: () {
-                      _videoViewController2.stop();
-                    },
-                  ),
-                  FlatButton(
-                    child: Text("DISPOSE"),
-                    onPressed: () {
-                      _videoViewController2.dispose();
                     },
                   ),
                 ],
@@ -176,13 +139,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             // Text("ratio=" + _videoViewController.aspectRatio.toString()),
             // Text("size=" + _videoViewController.size.width.toString() + "x" + _videoViewController.size.height.toString()),
             // Text("state=" + _videoViewController.playingState.toString()),
-            // Expanded(
-            //   child: image == null
-            //       ? Container()
-            //       : Container(
-            //     decoration: BoxDecoration(image: DecorationImage(image: MemoryImage(image))),
-            //   ),
-            // ),
+            Expanded(
+              child: image == null
+                  ? Container()
+                  : Container(
+                decoration: BoxDecoration(image: DecorationImage(image: MemoryImage(image))),
+              ),
+            ),
           ],
         ),
       ),
@@ -205,12 +168,17 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 }
 
 class GoTo extends StatelessWidget {
+  final String url;
+  GoTo(this.url);
   @override
   Widget build(BuildContext context) {
     return FlatButton(
       child: Text("GOTO"),
       onPressed: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => Screen2()));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => CPlayer(
+          title: "Video Streaming",
+          url: url,
+        )));
       },
     );
   }

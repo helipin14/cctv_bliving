@@ -147,6 +147,7 @@ class VlcPlayerController {
   ///
   /// Returns [Duration.zero] when the position is null (i.e. the player
   /// is uninitialized.)
+  int get getPosition => _position;
   Duration get position => _position != null
       ? new Duration(milliseconds: _position)
       : Duration.zero;
@@ -159,6 +160,7 @@ class VlcPlayerController {
   ///
   /// Returns [Duration.zero] when the duration is null (i.e. the player
   /// is uninitialized.)
+  int get getDuration => _duration;
   Duration get duration => _duration != null
       ? new Duration(milliseconds: _duration)
       : Duration.zero;
