@@ -78,7 +78,7 @@ class FlutterVideoView implements PlatformView, MethodChannel.MethodCallHandler,
                 vout.attachViews();
                 textureView.forceLayout();
                 if(wasPaused){
-                    // mediaPlayer.play();
+                    mediaPlayer.play();
                     wasPaused = false;
                 }
             }

@@ -13,6 +13,8 @@ import 'package:connectivity/connectivity.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 import 'package:auto_orientation/auto_orientation.dart';
+import 'utils/fileutils.dart';
+import 'dart:typed_data';
 
 class CPlayer extends StatefulWidget {
 
@@ -20,6 +22,7 @@ class CPlayer extends StatefulWidget {
   final String title;
   final String url; // = "http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_60fps_normal.mp4";
   final String iduser;
+  final String idcctv;
   final Color primaryColor;
   final Color accentColor;
   final Color highlightColor;
@@ -33,6 +36,7 @@ class CPlayer extends StatefulWidget {
     this.accentColor,
     this.highlightColor,
     this.iduser,
+    this.idcctv,
   }) : super(key: key);
 
   @override
@@ -65,8 +69,6 @@ class CPlayerState extends State<CPlayer> {
 
   @override
   void initState() {
-    print("Cplayer URL : ${widget.url}");
-    print("Cplayer Title : ${widget.title}");
     _beginInitState();
 
     // Initialise the cast driver
@@ -137,8 +139,20 @@ class CPlayerState extends State<CPlayer> {
           //_total = _controller.value.duration.inMilliseconds;
         }
     )..addListener(_controllerListener);
-    _controller.play();
+    _controller.addListener(() {
+      print("\n Listener added ... \n");
+      print("Duration : ${_controller.position.inSeconds}");
+      if(_controller.position.inSeconds == 5) {
+        print("\n\n Saving file ... \n\n");
+        saveFrame();
+      }
+    });
     super.initState();
+  }
+
+  Future<void> saveFrame() async {
+    Uint8List imageBytes = await _controller.makeSnapshot();
+    FileUtils.saveImage(imageBytes, "${widget.iduser}_${widget.idcctv}");
   }
 
   Future<void> _beginInitState() async {
@@ -191,7 +205,7 @@ class CPlayerState extends State<CPlayer> {
     }
 
     return WillPopScope(
-      onWillPop: () { return; },
+      onWillPop: () { _back(); },
       child: Scaffold(
           backgroundColor: Colors.black,
           body: Stack(
