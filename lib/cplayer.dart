@@ -98,11 +98,10 @@ class CPlayerState extends State<CPlayer> {
             if(!_controller.initialized) {
               // UNABLE TO CONNECT TO THE INTERNET (show error)
               _interruptWidget = ErrorInterruptMixin(
-                  icon: Icons.offline_bolt,
-                  title: "You're offline...",
-                  message: "Failed to connect to the internet. Please check your connection."
+                icon: Icons.offline_bolt,
+                title: "You're offline...",
+                message: "Failed to connect to the internet. Please check your connection."
               );
-
               _controller.removeListener(handleOfflinePlayback);
             }
           };
@@ -140,10 +139,9 @@ class CPlayerState extends State<CPlayer> {
         }
     )..addListener(_controllerListener);
     _controller.addListener(() {
-      print("\n Listener added ... \n");
       print("Duration : ${_controller.position.inSeconds}");
-      if(_controller.position.inSeconds == 5) {
-        print("\n\n Saving file ... \n\n");
+      if(_controller.position.inSeconds == 3) {
+        print("\n\n SAVING FILE \n\n");
         saveFrame();
       }
     });
@@ -156,10 +154,7 @@ class CPlayerState extends State<CPlayer> {
   }
 
   Future<void> _beginInitState() async {
-    // Disable screen rotation and UI
-
     await SystemChrome.setEnabledSystemUIOverlays([]);
-    // Activate wake-lock
     await Screen.keepOn(true);
   }
 
@@ -205,7 +200,9 @@ class CPlayerState extends State<CPlayer> {
     }
 
     return WillPopScope(
-      onWillPop: () { _back(); },
+      onWillPop: () { 
+        _back();
+       },
       child: Scaffold(
           backgroundColor: Colors.black,
           body: Stack(
@@ -213,7 +210,10 @@ class CPlayerState extends State<CPlayer> {
               children: <Widget>[
                 // Player
                 GestureDetector(
-                    onTap: () => setState(() => _isControlsVisible = !_isControlsVisible),
+                    onTap: () {
+                      print("is controller visible $_isControlsVisible");
+                      setState(() => _isControlsVisible = !_isControlsVisible);
+                    },
                     child: LayoutBuilder(builder: (_, BoxConstraints constraints) {
                       return Container(
                         color: Colors.black,
@@ -235,7 +235,7 @@ class CPlayerState extends State<CPlayer> {
                 new AnimatedOpacity(
                     opacity: _isControlsVisible ? 1.0 : 0.0,
 //                  opacity:  1.0 ,
-                    duration: new Duration(seconds: 1),
+                    duration: Duration(seconds: 1),
                     child: Stack(
                       children: <Widget>[
                         // Top Bar
@@ -440,7 +440,7 @@ class CPlayerState extends State<CPlayer> {
   }
 
   _back() {
-    AutoOrientation.portraitDownMode();
+    AutoOrientation.portraitUpMode();
     Navigator.popAndPushNamed(context, '/main/${widget.iduser}/4', result: "playback");
   }
 

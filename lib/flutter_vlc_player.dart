@@ -308,6 +308,23 @@ class VlcPlayerController {
     return imageBytes;
   }
 
+  Future<void> soundActive(int active) async {
+    await _methodChannel.invokeMethod("soundActive", {
+      'active':active
+    });
+  }
+
+  Future<void> soundController(double volume) async {
+    print("Volume : $volume");
+    await _methodChannel.invokeMethod("soundController", {
+      'volume':volume
+    });
+  }
+
+  Future<void> muteSound() async {
+    await _methodChannel.invokeMethod("muteSound");
+  }
+
   void dispose() {
     _methodChannel.invokeMethod("dispose");
   }
