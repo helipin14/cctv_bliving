@@ -138,19 +138,15 @@ class CPlayerState extends State<CPlayer> {
           //_total = _controller.value.duration.inMilliseconds;
         }
     )..addListener(_controllerListener);
-    _controller.addListener(() {
-      print("Duration : ${_controller.position.inSeconds}");
-      if(_controller.position.inSeconds == 3) {
-        print("\n\n SAVING FILE \n\n");
-        saveFrame();
-      }
-    });
     super.initState();
   }
 
   Future<void> saveFrame() async {
+    String fileName = "${widget.iduser}_${widget.idcctv}";
     Uint8List imageBytes = await _controller.makeSnapshot();
-    FileUtils.saveImage(imageBytes, "${widget.iduser}_${widget.idcctv}");
+    bool isExist = await FileUtils.isFileExist("$fileName");
+    isExist ? FileUtils.saveImage(imageBytes, "${fileName}") : FileUtils.replaceFile(fileName, imageBytes);
+    print("File saved.");
   }
 
   Future<void> _beginInitState() async {
@@ -200,8 +196,8 @@ class CPlayerState extends State<CPlayer> {
     }
 
     return WillPopScope(
-      onWillPop: () { 
-        _back();
+      onWillPop: () async { 
+        await _back();
        },
       child: Scaffold(
           backgroundColor: Colors.black,
@@ -439,7 +435,8 @@ class CPlayerState extends State<CPlayer> {
     }
   }
 
-  _back() {
+  _back() async {
+    await saveFrame();
     AutoOrientation.portraitUpMode();
     Navigator.popAndPushNamed(context, '/main/${widget.iduser}/4', result: "playback");
   }
