@@ -227,30 +227,30 @@ class FlutterVideoView implements PlatformView, MethodChannel.MethodCallHandler,
 
                 result.success(null);
                 break;
-            //     case "soundController":
-            //     double volume = methodCall.argument("volume");
-            //     if(mediaPlayer != null) {
-            //         Log.e("SoundController", "Volume -> " + String.valueOf(volume));
-            //         volume = volume * 100;
-            //         mediaPlayer.setVolume((int)volume);
-            //     } else return;
-            //     result.success(null);
-            //     break;
-            // case "soundActive":
-            //     int active = methodCall.argument("active");
-            //     if(mediaPlayer != null) {
-            //         Log.e("SoundActive", "Media Player sound active : " + String.valueOf(active));
-            //         if(active == 1) mediaPlayer.setVolume(100);
-            //         else if(active == 0) mediaPlayer.setVolume(0);
-            //         result.success(null);
-            //     } else return;
-            //     break;
-            // case "muteSound":
-            //     if(mediaPlayer != null) {
-            //         Log.e("MuteSound", "Mute sound");
-            //         mediaPlayer.setVolume(0);
-            //     } else return;
-            //     break;
+            case "soundController":
+                 double volume = methodCall.argument("volume");
+                 if(mediaPlayer != null) {
+                     Log.e("SoundController", "Volume -> " + String.valueOf(volume));
+                     volume = volume * 100;
+                     mediaPlayer.setVolume((int)volume);
+                 } else return;
+                 result.success(null);
+                 break;
+            case "soundActive":
+                 int active = methodCall.argument("active");
+                 if(mediaPlayer != null) {
+                     Log.e("SoundActive", "Media Player sound active : " + String.valueOf(active));
+                     if(active == 1) mediaPlayer.setVolume(100);
+                     else if(active == 0) mediaPlayer.setVolume(0);
+                     result.success(null);
+                 } else return;
+                 break;
+            case "muteSound":
+                 if(mediaPlayer != null) {
+                     Log.e("MuteSound", "Mute sound");
+                     mediaPlayer.setVolume(0);
+                 } else return;
+                 break;
         }
     }
 
