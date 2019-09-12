@@ -53,6 +53,7 @@ UIView *_view;
 
 @implementation FlutterVlcPlayerPlugin
 VLCMediaPlayer *_player;
+VLCAudio *_audio;
 FlutterResult _result;
 UIView *_view;
 
@@ -69,7 +70,7 @@ UIView *_view;
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result{
     _result = result;
     NSString* _methodName = call.method;
-    if ([_methodName isEqualToString:@"playVideo"]){
+    if ([_methodName isEqualToString:@"initialize"]){
         NSString *_url = call.arguments[@"url"];
         _player = [[VLCMediaPlayer alloc] init];
         VLCMedia *_media = [VLCMedia mediaWithURL:[NSURL URLWithString:_url]];
@@ -79,7 +80,43 @@ UIView *_view;
         [_player setDrawable: _videoView];
         [_player addObserver:self forKeyPath:@"state" options:NSKeyValueObservingOptionNew context:nil];
         [_player play];
-    } else if ([_methodName isEqualToString:@"dispose"]){
+    }else if ([_methodName isEqualToString:@"soundController"]){
+        NSString *_volum = call.arguments[@"volume"];
+        NSLog(@"volume 1 : %@",_volum);
+        double _vol = [_volum doubleValue];
+        NSLog(@"volume 2: %f",_vol);
+        _vol = _vol *100;
+        NSLog(@"volume 3 : %f",_vol);
+
+        _audio = [_player audio];
+        [_audio setVolume:_vol];
+
+    }else if ([_methodName isEqualToString:@"muteSound"]){
+        _audio = [_player audio];
+        [_audio setVolume:0];
+
+    }else if ([_methodName isEqualToString:@"soundActive"]){
+        NSString *_volum = call.arguments[@"active"];
+        double _vol = [_volum integerValue];
+        _audio = [_player audio];
+        if(_vol==1){
+            [_audio setVolume:100];
+        }else{
+            [_audio setVolume:0];
+        }
+
+    } else if ([_methodName isEqualToString:@"setPlaybackState"]){
+
+        NSString *playbackState = call.arguments[@"playbackState"];
+        if([playbackState isEqualToString:@"play"]){
+            [_player play];
+        }else if([playbackState isEqualToString:@"pause"]){
+            [_player pause];
+        }else if([playbackState isEqualToString:@"stop"]){
+            [_player stop];
+        }
+
+    }else if ([_methodName isEqualToString:@"dispose"]){
         [_player stop];
     }else if ([_methodName isEqualToString:@"getSnapshot"]){
         UIView *_drawable = _player.drawable;
