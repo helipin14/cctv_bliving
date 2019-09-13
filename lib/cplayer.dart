@@ -436,7 +436,7 @@ class CPlayerState extends State<CPlayer> {
   }
 
   _back() async {
-    await saveFrame();
+    if(_controller.initialized && _controller != null) await saveFrame();
     AutoOrientation.portraitUpMode();
     Navigator.popAndPushNamed(context, '/main/${widget.iduser}/4', result: "playback");
   }

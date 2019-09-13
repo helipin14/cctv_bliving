@@ -19,7 +19,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   VlcPlayer videoView;
   VlcPlayerController _videoViewController;
   VlcPlayerController _videoViewController2;
-  String url = "rtsp://admin:admin@192.168.100.181:554/mode=real&idc=1&ids=1";
+  String url = "rtsp://admin:admin@192.168.100.189:554/mode=real&idc=1&ids=1";
   String filePath = "";
   File file;
 
@@ -123,7 +123,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 ],
               ),
             ),
-            file != null ? Image.file(file) : Container(),
+            // file != null ? Image.file(file) : Container(),
             // FlatButton(
             //   child: Text("Change URL"),
             //   onPressed: () => _videoViewController.setStreamUrl("rtsp://admin:admin@192.168.100.190:554/mode=real&idc=1&ids=1"),
@@ -171,10 +171,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   void _createCameraImage() async {
     // _checkFileExist();
-    // Uint8List file = await _videoViewController.makeSnapshot();
-    // setState(() {
-    //   image = file;
-    // });
+    Uint8List file = await _videoViewController.makeSnapshot();
+    setState(() {
+      image = file;
+    });
     // FileUtils.saveImage(file, "_");
     // setState(() {
     //  FileUtils.getFullPath("a21etxvxy8cm8am56tzd_e3g92psj7k10ry82l5y6").then((path) {
