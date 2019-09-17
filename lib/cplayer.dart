@@ -145,7 +145,7 @@ class CPlayerState extends State<CPlayer> {
     String fileName = "${widget.iduser}_${widget.idcctv}";
     Uint8List imageBytes = await _controller.makeSnapshot();
     bool isExist = await FileUtils.isFileExist("$fileName");
-    isExist ? FileUtils.saveImage(imageBytes, "${fileName}") : FileUtils.replaceFile(fileName, imageBytes);
+    !isExist ? FileUtils.saveImage(imageBytes, "${fileName}") : FileUtils.replaceFile(fileName, imageBytes);
     print("File saved.");
   }
 
@@ -436,9 +436,13 @@ class CPlayerState extends State<CPlayer> {
   }
 
   _back() async {
-    if(_controller.initialized && _controller != null) await saveFrame();
+    if(_controller.initialized && _controller != null) {
+      print("Saving frame ....");
+      await saveFrame();
+    }
     AutoOrientation.portraitUpMode();
-    Navigator.popAndPushNamed(context, '/main/${widget.iduser}/4', result: "playback");
+    // Navigator.popAndPushNamed(context, '/main/${widget.iduser}/4', result: "playback");
+    Navigator.pop(context);
   }
 
   _applyTimeDelta() async {

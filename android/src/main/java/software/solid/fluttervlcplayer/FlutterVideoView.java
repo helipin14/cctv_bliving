@@ -42,6 +42,7 @@ class FlutterVideoView implements PlatformView, MethodChannel.MethodCallHandler,
     private TextureView textureView;
     private IVLCVout vout;
     private boolean playerDisposed;
+    private boolean playerPlaying = false;
 
     public FlutterVideoView(Context context, PluginRegistry.Registrar _registrar, BinaryMessenger messenger, int id) {
         this.playerDisposed = false;
@@ -124,9 +125,10 @@ class FlutterVideoView implements PlatformView, MethodChannel.MethodCallHandler,
 
     @Override
     public void dispose() {
+        playerPlaying = false;
+        playerDisposed = true;
         if(mediaPlayer != null) mediaPlayer.stop();
         vout.detachViews();
-        playerDisposed = true;
     }
 
 
@@ -183,11 +185,13 @@ class FlutterVideoView implements PlatformView, MethodChannel.MethodCallHandler,
             case "getSnapshot":
                 String imageBytes;
                 Map<String, String> response = new HashMap<>();
-                if (mediaPlayer.isPlaying()) {
+                Log.e("MediaPlayer", "Media player is playing : " + String.valueOf(playerPlaying));
+                if (playerPlaying) {
                     Bitmap bitmap = textureView.getBitmap();
                     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                     imageBytes = Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT);
+                    if(imageBytes != null) Log.e("ImageBytes", "\n Image bytes is not null return the value. \n");
                     response.put("snapshot", imageBytes);
                 }
                 result.success(response);
@@ -201,12 +205,16 @@ class FlutterVideoView implements PlatformView, MethodChannel.MethodCallHandler,
                     case "play":
                         textureView.forceLayout();
                         mediaPlayer.play();
+                        playerPlaying = true;
+                        Log.e(TAG, "\n Player playing : " + String.valueOf(playerPlaying) + "\n");
                         break;
                     case "pause":
                         mediaPlayer.pause();
                         break;
                     case "stop":
                         mediaPlayer.stop();
+                        playerPlaying = false;
+                        Log.e(TAG, "\n Player playing : " + String.valueOf(playerPlaying) + "\n");
                         break;
                 }
 
