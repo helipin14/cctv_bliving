@@ -26,6 +26,7 @@ class CPlayer extends StatefulWidget {
   final Color primaryColor;
   final Color accentColor;
   final Color highlightColor;
+  final Function onBack;
 
   CPlayer({
     Key key,
@@ -37,6 +38,7 @@ class CPlayer extends StatefulWidget {
     this.highlightColor,
     this.iduser,
     this.idcctv,
+    this.onBack,
   }) : super(key: key);
 
   @override
@@ -144,6 +146,7 @@ class CPlayerState extends State<CPlayer> {
   Future<void> saveFrame() async {
     String fileName = "${widget.iduser}_${widget.idcctv}";
     Uint8List imageBytes = await _controller.makeSnapshot();
+    // FileUtils.saveImage(imageBytes, "${fileName}");
     bool isExist = await FileUtils.isFileExist("$fileName");
     !isExist ? FileUtils.saveImage(imageBytes, "${fileName}") : FileUtils.replaceFile(fileName, imageBytes);
     print("File saved.");
@@ -439,6 +442,7 @@ class CPlayerState extends State<CPlayer> {
     if(_controller.initialized && _controller != null) {
       print("Saving frame ....");
       await saveFrame();
+      widget.onBack();
     }
     AutoOrientation.portraitUpMode();
     Navigator.popAndPushNamed(context, '/main/${widget.iduser}/4', result: true);
