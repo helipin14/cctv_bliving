@@ -43,6 +43,7 @@ class FlutterVideoView implements PlatformView, MethodChannel.MethodCallHandler,
     private IVLCVout vout;
     private boolean playerDisposed;
     private boolean playerPlaying = false;
+    private static final String TAG = "FlutterVideoView";
 
     public FlutterVideoView(Context context, PluginRegistry.Registrar _registrar, BinaryMessenger messenger, int id) {
         this.playerDisposed = false;
@@ -80,8 +81,10 @@ class FlutterVideoView implements PlatformView, MethodChannel.MethodCallHandler,
                 vout.attachViews();
                 textureView.forceLayout();
                 if(wasPaused){
-                    mediaPlayer.play();
+                    playerPlaying = true;
                     wasPaused = false;
+                    mediaPlayer.play();
+                    Log.e(TAG, "Media player on surface text available " + String.valueOf(playerPlaying));
                 }
             }
 
@@ -204,8 +207,8 @@ class FlutterVideoView implements PlatformView, MethodChannel.MethodCallHandler,
                 switch(playbackState){
                     case "play":
                         textureView.forceLayout();
-                        mediaPlayer.play();
                         playerPlaying = true;
+                        mediaPlayer.play();
                         Log.e(TAG, "\n Player playing : " + String.valueOf(playerPlaying) + "\n");
                         break;
                     case "pause":
@@ -235,7 +238,7 @@ class FlutterVideoView implements PlatformView, MethodChannel.MethodCallHandler,
                 mediaPlayer.setTime(time);
 
                 result.success(null);
-                break;
+                break;  
             case "soundController":
                 double volume = methodCall.argument("volume");
                 if(mediaPlayer != null) {

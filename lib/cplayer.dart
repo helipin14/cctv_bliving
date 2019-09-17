@@ -441,8 +441,7 @@ class CPlayerState extends State<CPlayer> {
       await saveFrame();
     }
     AutoOrientation.portraitUpMode();
-    // Navigator.popAndPushNamed(context, '/main/${widget.iduser}/4', result: "playback");
-    Navigator.pop(context);
+    Navigator.popAndPushNamed(context, '/main/${widget.iduser}/4', result: true);
   }
 
   _applyTimeDelta() async {
