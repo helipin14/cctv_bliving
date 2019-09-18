@@ -100,9 +100,9 @@ class CPlayerState extends State<CPlayer> {
             if(!_controller.initialized) {
               // UNABLE TO CONNECT TO THE INTERNET (show error)
               _interruptWidget = ErrorInterruptMixin(
-                icon: Icons.offline_bolt,
-                title: "You're offline...",
-                message: "Failed to connect to the internet. Please check your connection."
+                  icon: Icons.offline_bolt,
+                  title: "You're offline...",
+                  message: "Failed to connect to the internet. Please check your connection."
               );
               _controller.removeListener(handleOfflinePlayback);
             }
@@ -144,10 +144,10 @@ class CPlayerState extends State<CPlayer> {
 
   Future<void> saveFrame() async {
     String fileName = "${widget.iduser}_${widget.idcctv}";
-    bool isExist = await FileUtils.isFileExist("$fileName");
+    bool isExist = await FileUtils.isFileExist(fileName);
     Uint8List imageBytes = await _controller.makeSnapshot();
-    imageBytes != null ? isExist == false ? FileUtils.saveImage(imageBytes, "${fileName}") : FileUtils.replaceFile(fileName, imageBytes) 
-      : print("Image Bytes is null");
+    imageBytes != null ? isExist == false ? FileUtils.saveImage(imageBytes, fileName) : FileUtils.replaceFile(fileName, imageBytes)
+        : print("Image Bytes is null");
     print("File saved.");
   }
 
@@ -198,9 +198,9 @@ class CPlayerState extends State<CPlayer> {
     }
 
     return WillPopScope(
-      onWillPop: () async { 
+      onWillPop: () async {
         await _back();
-       },
+      },
       child: Scaffold(
           backgroundColor: Colors.black,
           body: Stack(
@@ -228,7 +228,15 @@ class CPlayerState extends State<CPlayer> {
                       );
                     })
                 ),
-
+                GestureDetector(
+                  onTap: (){
+                    print("is control visible bef1 : $_isControlsVisible");
+                    setState(() {
+                      _isControlsVisible = !_isControlsVisible;
+                      print("is control visible  aft1: $_isControlsVisible");
+                    });
+                  },
+                ),
                 // Controls Layer
                 new AnimatedOpacity(
                     opacity: _isControlsVisible ? 1.0 : 0.0,
@@ -236,6 +244,15 @@ class CPlayerState extends State<CPlayer> {
                     duration: Duration(seconds: 1),
                     child: Stack(
                       children: <Widget>[
+                        GestureDetector(
+                          onTap: (){
+                            print("is control visible bef112 : $_isControlsVisible");
+                            setState(() {
+                              _isControlsVisible = !_isControlsVisible;
+                              print("is control visible  aft112: $_isControlsVisible");
+                            });
+                          },
+                        ),
                         // Top Bar
                         GestureDetector(
                             onTap: (){
@@ -432,7 +449,7 @@ class CPlayerState extends State<CPlayer> {
       AutoOrientation.portraitUpMode();
       AutoOrientation.portraitDownMode();
     } else if(orientation == "landscape") {
-      AutoOrientation.landscapeLeftMode();
+//      AutoOrientation.landscapeLeftMode();
       AutoOrientation.landscapeRightMode();
     }
   }
