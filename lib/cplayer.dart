@@ -137,7 +137,6 @@ class CPlayerState extends State<CPlayer> {
             }
           });
           _controller.soundActive(1);
-          //_total = _controller.value.duration.inMilliseconds;
         }
     )..addListener(_controllerListener);
     super.initState();
@@ -145,10 +144,10 @@ class CPlayerState extends State<CPlayer> {
 
   Future<void> saveFrame() async {
     String fileName = "${widget.iduser}_${widget.idcctv}";
-    Uint8List imageBytes = await _controller.makeSnapshot();
-    // FileUtils.saveImage(imageBytes, "${fileName}");
     bool isExist = await FileUtils.isFileExist("$fileName");
-    !isExist ? FileUtils.saveImage(imageBytes, "${fileName}") : FileUtils.replaceFile(fileName, imageBytes);
+    Uint8List imageBytes = await _controller.makeSnapshot();
+    imageBytes != null ? isExist == false ? FileUtils.saveImage(imageBytes, "${fileName}") : FileUtils.replaceFile(fileName, imageBytes) 
+      : print("Image Bytes is null");
     print("File saved.");
   }
 
@@ -439,8 +438,10 @@ class CPlayerState extends State<CPlayer> {
   }
 
   _back() async {
+    // print(_controller.initialized ? "Controller initialized" : "Controller isn't initialized");
+    // print(_controller == null ? "Controller is null" : "Controller isn't null");
     if(_controller.initialized && _controller != null) {
-      print("Saving frame ....");
+      print("\n Saving frame... \n");
       await saveFrame();
       widget.onBack();
     }
