@@ -308,10 +308,6 @@ class VlcPlayerController {
     return imageBytes;
   }
 
-  void dispose() {
-    _methodChannel.invokeMethod("dispose");
-  }
-
   Future<void> soundActive(int active) async {
     await _methodChannel.invokeMethod("soundActive", {
       'active':active
@@ -329,4 +325,7 @@ class VlcPlayerController {
     await _methodChannel.invokeMethod("muteSound");
   }
 
+  void dispose() {
+    _methodChannel.invokeMethod("dispose");
+  }
 }

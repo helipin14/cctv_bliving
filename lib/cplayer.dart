@@ -26,6 +26,7 @@ class CPlayer extends StatefulWidget {
   final Color primaryColor;
   final Color accentColor;
   final Color highlightColor;
+  final Function onBack;
 
   CPlayer({
     Key key,
@@ -37,6 +38,7 @@ class CPlayer extends StatefulWidget {
     this.highlightColor,
     this.iduser,
     this.idcctv,
+    this.onBack,
   }) : super(key: key);
 
   @override
@@ -98,11 +100,10 @@ class CPlayerState extends State<CPlayer> {
             if(!_controller.initialized) {
               // UNABLE TO CONNECT TO THE INTERNET (show error)
               _interruptWidget = ErrorInterruptMixin(
-                  icon: Icons.offline_bolt,
-                  title: "You're offline...",
-                  message: "Failed to connect to the internet. Please check your connection."
+                icon: Icons.offline_bolt,
+                title: "You're offline...",
+                message: "Failed to connect to the internet. Please check your connection."
               );
-
               _controller.removeListener(handleOfflinePlayback);
             }
           };
@@ -136,30 +137,22 @@ class CPlayerState extends State<CPlayer> {
             }
           });
           _controller.soundActive(1);
-          //_total = _controller.value.duration.inMilliseconds;
         }
     )..addListener(_controllerListener);
-    _controller.addListener(() {
-      print("\n Listener added ... \n");
-      print("Duration : ${_controller.position.inSeconds}");
-      if(_controller.position.inSeconds == 5) {
-        print("\n\n Saving file ... \n\n");
-        saveFrame();
-      }
-    });
     super.initState();
   }
 
   Future<void> saveFrame() async {
+    String fileName = "${widget.iduser}_${widget.idcctv}";
+    bool isExist = await FileUtils.isFileExist("$fileName");
     Uint8List imageBytes = await _controller.makeSnapshot();
-    FileUtils.saveImage(imageBytes, "${widget.iduser}_${widget.idcctv}");
+    imageBytes != null ? isExist == false ? FileUtils.saveImage(imageBytes, "${fileName}") : FileUtils.replaceFile(fileName, imageBytes) 
+      : print("Image Bytes is null");
+    print("File saved.");
   }
 
   Future<void> _beginInitState() async {
-    // Disable screen rotation and UI
-
     await SystemChrome.setEnabledSystemUIOverlays([]);
-    // Activate wake-lock
     await Screen.keepOn(true);
   }
 
@@ -205,7 +198,9 @@ class CPlayerState extends State<CPlayer> {
     }
 
     return WillPopScope(
-      onWillPop: () { _back(); },
+      onWillPop: () async { 
+        await _back();
+       },
       child: Scaffold(
           backgroundColor: Colors.black,
           body: Stack(
@@ -213,7 +208,10 @@ class CPlayerState extends State<CPlayer> {
               children: <Widget>[
                 // Player
                 GestureDetector(
-                    onTap: () => setState(() => _isControlsVisible = !_isControlsVisible),
+                    onTap: () {
+                      print("is controller visible $_isControlsVisible");
+                      setState(() => _isControlsVisible = !_isControlsVisible);
+                    },
                     child: LayoutBuilder(builder: (_, BoxConstraints constraints) {
                       return Container(
                         color: Colors.black,
@@ -235,7 +233,7 @@ class CPlayerState extends State<CPlayer> {
                 new AnimatedOpacity(
                     opacity: _isControlsVisible ? 1.0 : 0.0,
 //                  opacity:  1.0 ,
-                    duration: new Duration(seconds: 1),
+                    duration: Duration(seconds: 1),
                     child: Stack(
                       children: <Widget>[
                         // Top Bar
@@ -439,9 +437,16 @@ class CPlayerState extends State<CPlayer> {
     }
   }
 
-  _back() {
-    AutoOrientation.portraitDownMode();
-    Navigator.popAndPushNamed(context, '/main/${widget.iduser}/4', result: "playback");
+  _back() async {
+    // print(_controller.initialized ? "Controller initialized" : "Controller isn't initialized");
+    // print(_controller == null ? "Controller is null" : "Controller isn't null");
+    if(_controller.initialized && _controller != null) {
+      print("\n Saving frame... \n");
+      await saveFrame();
+      widget.onBack();
+    }
+    AutoOrientation.portraitUpMode();
+    Navigator.popAndPushNamed(context, '/main/${widget.iduser}/4', result: true);
   }
 
   _applyTimeDelta() async {

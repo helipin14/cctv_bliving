@@ -17,7 +17,6 @@ class FileUtils {
 
   static Future<bool> isFileExist(String fileName) async {
     String path = await getDirPath();
-    print("$path/$fileName.png");
     return await Io.File("$path/$fileName.png").exists();
   }
 
@@ -34,6 +33,11 @@ class FileUtils {
   static getListFiles() async {
     String path = await getDirPath();
     List files = Io.Directory("$path").listSync();
-    print("\n Files $files \n");
+  }
+
+  static replaceFile(String fileName, Uint8List imageBytes) async {
+    String path = await getDirPath();
+    Io.File("$path/$fileName.png").delete();
+    await saveImage(imageBytes, fileName);
   }
 }
