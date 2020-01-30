@@ -462,9 +462,8 @@ class CPlayerState extends State<CPlayer> {
       // print("\n Saving frame... \n");
       // await saveFrame();
       Get.back();
+      AutoOrientation.portraitUpMode();
     }
-    AutoOrientation.portraitUpMode();
-    Navigator.popAndPushNamed(context, '/main/${widget.iduser}/4', result: true);
   }
 
   _applyTimeDelta() async {
