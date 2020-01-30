@@ -8,6 +8,7 @@ import 'package:flutter_vlc_player/ui/cplayer_interrupt.dart';
 import 'package:flutter_vlc_player/ui/cplayer_progress.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:screen/screen.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:http/http.dart' as http;
@@ -458,9 +459,9 @@ class CPlayerState extends State<CPlayer> {
     // print(_controller.initialized ? "Controller initialized" : "Controller isn't initialized");
     // print(_controller == null ? "Controller is null" : "Controller isn't null");
     if(_controller.initialized && _controller != null) {
-      print("\n Saving frame... \n");
-      await saveFrame();
-      widget.onBack();
+      // print("\n Saving frame... \n");
+      // await saveFrame();
+      Get.back();
     }
     AutoOrientation.portraitUpMode();
     Navigator.popAndPushNamed(context, '/main/${widget.iduser}/4', result: true);
